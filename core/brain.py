@@ -1,4 +1,5 @@
 import asyncio
+import random
 from typing import Optional
 from dataclasses import dataclass
 from core.neuron import AsyncNeuron
@@ -15,6 +16,44 @@ class Synapse:
   target_id: int
   weight: float
   delay: float
+
+  @staticmethod
+  def default_weight_for(
+    neuron: "AsyncNeuron",
+    fraction: float = 0.5) -> float:
+    """
+    Suggest a reasonable EPSP/IPSP weight for a postsynaptic neuron.
+
+    Computes a weight as a fraction of the neuron's threshold minus resting
+    potential, ensuring a single spike has a reasonable postsynaptic effect.
+
+
+    Args:
+      neuron (AsyncNeuron): The postsynaptic neuron to target.
+      fraction (float): Fraction of (threshold - resting potential) to use.
+        Positive fractions correspond to excitatory inputs (EPSPs).
+        Negative fractions correspond to inhibitory inputs (IPSPs).
+
+    Returns:
+      float: Suggested synapse weight for spike-driven input.
+    """
+    return fraction * (neuron.threshold - neuron.rpotential)
+
+  @staticmethod
+  def delay_from_distr(mean: float = 0.002, std: float = 0.0005) -> float:
+    """
+    Computes a synaptic delay in seconds for a local cortical connection
+    from a gaussian (normal) distribution.
+
+    Args:
+      mean (float): Mean delay in seconds (default 0.002 s ~2 ms)
+      std (float): Standard deviation for variability (default 0.0005 s
+      ~0.5 ms)
+
+    Returns:
+      float: Suggested synaptic delay
+    """
+    return max(0.0, random.gauss(mean, std))
 
 @dataclass
 class Input:
@@ -85,7 +124,11 @@ class Brain:
     """
     return id in self.neurons
 
-  def add_neuron(self, neuron: AsyncNeuron, is_input: bool = False, is_output: bool = False) -> None:
+  def add_neuron(
+      self,
+      neuron: AsyncNeuron,
+      is_input: bool = False,
+      is_output: bool = False) -> None:
     """Add a neuron to the brain with optional input/output designation.
 
     Args:
@@ -109,7 +152,8 @@ class Brain:
       from_neuron_id: Source neuron ID
       synapse: Synapse object specifying target, weight, and delay
     """
-    if self.neuron_exists(from_neuron_id) and self.neuron_exists(synapse.target_id):
+    if self.neuron_exists(from_neuron_id) \
+      and self.neuron_exists(synapse.target_id):
       self.connections[from_neuron_id].append(synapse)
 
   def break_synapses(self, from_neuron_id: int, to_neuron_id: int) -> None:
@@ -162,7 +206,9 @@ class Brain:
     self.time = t_next
 
     events = self.input_buffer.pop(self.time, [])
-    tasks = [self._process_input(inp.neuron_id, inp.strength) for inp in events]
+    tasks = [
+      self._process_input(inp.neuron_id, inp.strength) for inp in events
+    ]
 
     if tasks:
       await asyncio.gather(*tasks)
