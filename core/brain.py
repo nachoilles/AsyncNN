@@ -2,7 +2,7 @@ import asyncio
 import random
 from typing import Optional
 from dataclasses import dataclass
-from core.neuron import AsyncNeuron
+from core.async_neuron import AsyncNeuron
 
 @dataclass
 class Synapse:

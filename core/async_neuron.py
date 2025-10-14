@@ -1,5 +1,5 @@
 import asyncio
-from enum import Enum
+from core.async_neuron_presets import *
 import math
 import itertools
 
@@ -23,44 +23,6 @@ class AsyncNeuron:
     rrperiod (float): Relative refractory period during which threshold is elevated.
     last_input_time (float): Simulation time of the most recent input received.
   """
-
-  DEFAULT_NEURON_CONFIGS: dict[str, dict] = {
-    "biological": {
-      "rpotential": -70.0,    # typical resting potential in mV
-      "threshold": -55.0,     # typical firing threshold
-      "decay": 0.05,          # realistic membrane time constant (scaled for simulation units)
-      "psdelay": 0.001,       # synaptic delay in seconds
-      "arperiod": 0.002,      # absolute refractory period in seconds
-      "rrperiod": 0.003,      # relative refractory period in seconds
-    },
-    "non_refractory": {
-      "rpotential": -70.0,
-      "threshold": -55.0,
-      "decay": 0.05,
-      "psdelay": 0.001,
-      "arperiod": 0.0,        # no absolute refractory period
-      "rrperiod": 0.0,        # no relative refractory period
-    },
-    "fast_spiking": {
-      "rpotential": -65.0,
-      "threshold": -50.0,
-      "decay": 0.1,
-      "psdelay": 0.0005,
-      "arperiod": 0.001,
-      "rrperiod": 0.002,
-    },
-    "high_threshold": {
-      "rpotential": -70.0,
-      "threshold": -40.0,
-      "decay": 0.05,
-      "psdelay": 0.001,
-      "arperiod": 0.002,
-      "rrperiod": 0.003,
-    },
-  }
-
-  Preset = Enum("Preset", {name: name for name in DEFAULT_NEURON_CONFIGS})
-
   _id_gen = itertools.count()
 
   def __init__(
@@ -94,17 +56,17 @@ class AsyncNeuron:
     self.last_input_time: float = 0.0
 
   @classmethod
-  def from_preset(cls, preset: "AsyncNeuron.Preset") -> "AsyncNeuron": # type: ignore
+  def from_preset(cls, preset: Preset) -> "AsyncNeuron":
     """
     Create an AsyncNeuron instance using a predefined preset.
 
     Args:
-      preset (AsyncNeuron.Preset): One of the predefined presets.
+      preset (Preset): One of the predefined presets.
 
     Returns:
       AsyncNeuron: A new neuron instance with parameters from the preset.
     """
-    config = cls.DEFAULT_NEURON_CONFIGS[preset.value]
+    config = DEFAULT_NEURON_CONFIGS[preset.value]
     return cls(**config)
 
   async def receive_input(self, current_time: float, input_strength: float) -> bool:
