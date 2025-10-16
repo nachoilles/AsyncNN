@@ -4,4 +4,9 @@
 # Python environment
 /.env
 
+# Pycache
+__pycache__
+
+# Misc
 test.py
+learning.md
