@@ -20,7 +20,6 @@ class AsyncNeuron:
     self.rpotential: float = rpotential
     self.threshold: float = threshold
     self.decay: float = decay
-    self.psdelay: float = psdelay
     self.arperiod: float = arperiod
     self.rrperiod: float = rrperiod
     self.last_input_time: float = 0.0
@@ -31,17 +30,16 @@ class AsyncNeuron:
     return cls(**config)
 
   async def receive_input(self, current_time: float, input_strength: float) -> bool:
-    await asyncio.sleep(self.psdelay)
     old_potential = self.get_current_potential(current_time)
-    self.potential = old_potential
-    self.last_input_time = current_time
-
-    self.potential += input_strength
-
+    self.potential = old_potential + input_strength
     threshold_now = self._get_dynamic_threshold(current_time)
     fired = self.potential >= threshold_now
+
+    self.last_input_time = current_time
+
     if fired:
-        self.potential = self.rpotential
+      self.potential = self.rpotential
+      # print(f"{" " * 2 * self.id}Neuron {self.id} fired at t={current_time}")
     return fired
 
   def get_current_potential(self, current_time: float) -> float:

@@ -1,12 +1,11 @@
 import itertools
-from typing import Optional
 import random
 
 class Synapse:
   _get_id = itertools.count()
 
   def __init__(self, pre_id: int, post_id: int, weight: float, delay: float) -> None:
-    self._id: int = next(self._get_id)        # Id for the actual synapse
+    self._id: int = next(self._get_id)       # Id for the actual synapse
     self.pre_id = pre_id                     # Id of the pre-synaptic neuron
     self.post_id = post_id                   # Id of the post-synaptic neuron
     self.weight = weight                     # Weight of the synapse
@@ -26,7 +25,7 @@ class Synapse:
 
 class SynapseMap:
   def __init__(self) -> None:
-    self._synapses: dict[int, Synapse] = {}              # Set of all synapses
+    self._synapses: dict[int, Synapse] = {}           # Set of all synapses
     self._pre_synapses: dict[int, list[int]] = {}     # [pre-neuron-id, [pre-synapse-ids]]
     self._post_synapses: dict[int, list[int]] = {}    # [post-neuron-id, [post-synapse-ids]]
 
@@ -80,7 +79,7 @@ class SynapseMap:
         self._post_synapses[neuron_id] = []
 
   def add_neuron(self, neuron_id: int) -> None:
-    if not self._pre_synapses[neuron_id]:
+    if neuron_id not in self._pre_synapses:
       self._pre_synapses[neuron_id] = []
-    if not self._post_synapses[neuron_id]:
+    if neuron_id not in self._post_synapses:
       self._post_synapses[neuron_id] = []

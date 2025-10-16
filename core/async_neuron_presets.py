@@ -5,7 +5,6 @@ DEFAULT_NEURON_CONFIGS: dict[str, dict] = {
     "rpotential": -70.0,    # typical resting potential in mV
     "threshold": -55.0,     # typical firing threshold
     "decay": 0.05,          # realistic membrane time constant (scaled for simulation units)
-    "psdelay": 0.001,       # synaptic delay in seconds
     "arperiod": 0.002,      # absolute refractory period in seconds
     "rrperiod": 0.003,      # relative refractory period in seconds
   },
@@ -13,7 +12,6 @@ DEFAULT_NEURON_CONFIGS: dict[str, dict] = {
     "rpotential": -70.0,
     "threshold": -55.0,
     "decay": 0.05,
-    "psdelay": 0.001,
     "arperiod": 0.0,        # no absolute refractory period
     "rrperiod": 0.0,        # no relative refractory period
   },
@@ -21,7 +19,6 @@ DEFAULT_NEURON_CONFIGS: dict[str, dict] = {
     "rpotential": -65.0,
     "threshold": -50.0,
     "decay": 0.1,
-    "psdelay": 0.0005,
     "arperiod": 0.001,
     "rrperiod": 0.002,
   },
@@ -29,7 +26,6 @@ DEFAULT_NEURON_CONFIGS: dict[str, dict] = {
     "rpotential": -70.0,
     "threshold": -40.0,
     "decay": 0.05,
-    "psdelay": 0.001,
     "arperiod": 0.002,
     "rrperiod": 0.003,
   },

@@ -78,6 +78,15 @@ class Brain:
         del self._neurons_by_id[neuron_id]
       self._neurons.remove(neuron_id)
 
+  def add_synapse(self, synapse: Synapse) -> None:
+    self._synapse_map.create_synapse(synapse)
+
+  def delete_synapse(self, synapse: Synapse | int) -> None:
+    if isinstance(synapse, int):
+      self._synapse_map.break_synapse(synapse)
+    else:
+      self._synapse_map.break_synapse(synapse.id)
+
   # ---------- Input handling ----------
 
   def add_input(self, timestamp: float, input: Input) -> None:
@@ -90,9 +99,11 @@ class Brain:
       return
 
     t_next = min(self._input_buffer.keys())
+
     self.time = t_next
 
     events = self._input_buffer.pop(self.time, [])
+
     tasks = [
       self._process_input(inp.neuron_id, inp.strength) for inp in events
     ]
